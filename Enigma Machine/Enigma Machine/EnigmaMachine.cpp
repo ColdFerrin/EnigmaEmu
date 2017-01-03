@@ -1,6 +1,7 @@
 // implementing the enigma machine
 #include <iostream>
 #include "EnigmaMachine.h"
+using namespace std;
 
 EnigmaMachine::EnigmaMachine()
 {
@@ -19,41 +20,45 @@ void EnigmaMachine::setup(int leftRotorPosittion, int middleRotorPosittion, int 
     rotorMiddle.setup(middleRotorPosittion - 1);
     rotorRight.setup(rightRotorPosittion - 1);
 }
-char EnigmaMachine::process(char input)
+string EnigmaMachine::process(string input)
 {
-    if ((input >= 'a' && input <= 'z') || (input >= 'A' && input <= 'Z'))
+    char current;
+    string output = "";
+    for (int i = 0; i < input.length(); i++)
     {
-        rightRotorInputForward = input;
-        rotorRight.encryptForward(rightRotorInputForward);
+        if (input[i] != ' ')
+        {
 
-        middleRotorInputForward = rotorRight.outputForward.value;
-        //std::cout << middleRotorInputForward;
-        rotorMiddle.encryptForward(middleRotorInputForward);
+            if ((input[i] >= 'a' && input[i] <= 'z') || (input[i] >= 'A' && input[i] <= 'Z'))
+            {
+                rightRotorInputForward = input[i];
+                rotorRight.encryptForward(rightRotorInputForward);
 
-        leftRotorInputForward = rotorMiddle.outputForward.value;
-        //std::cout << leftRotorInputForward;
-        rotorLeft.encryptForward(leftRotorInputForward);
+                middleRotorInputForward = rotorRight.outputForward.value;
+                //std::cout << middleRotorInputForward;
+                rotorMiddle.encryptForward(middleRotorInputForward);
 
-        reflectorInput = rotorLeft.outputForward.value;
-        //std::cout << reflectorInput;
-        leftRotorInputReverse = reflector.process(reflectorInput);
-        //std::cout << leftRotorInputReverse;
+                leftRotorInputForward = rotorMiddle.outputForward.value;
+                //std::cout << leftRotorInputForward;
+                rotorLeft.encryptForward(leftRotorInputForward);
 
-        rotorLeft.encryptReverse(leftRotorInputReverse, rotorMiddle.outputForward.moveNext);
+                reflectorInput = rotorLeft.outputForward.value;
+                //std::cout << reflectorInput;
+                leftRotorInputReverse = reflector.process(reflectorInput);
+                //std::cout << leftRotorInputReverse;
 
-        middleRotorInputReverse = rotorLeft.outputReverse.value;
-        //std::cout << middleRotorInputReverse;
-        rotorMiddle.encryptReverse(middleRotorInputReverse, rotorRight.outputForward.moveNext);
+                rotorLeft.encryptReverse(leftRotorInputReverse, rotorMiddle.outputForward.moveNext);
 
-        rightRotorInputReverse = rotorMiddle.outputReverse.value;
-        //std::cout << rightRotorInputReverse;
-        rotorRight.encryptReverse(rightRotorInputReverse, 1);
-        output = rotorRight.outputReverse.value;
-        return output;
+                middleRotorInputReverse = rotorLeft.outputReverse.value;
+                //std::cout << middleRotorInputReverse;
+                rotorMiddle.encryptReverse(middleRotorInputReverse, rotorRight.outputForward.moveNext);
+
+                rightRotorInputReverse = rotorMiddle.outputReverse.value;
+                //std::cout << rightRotorInputReverse;
+                rotorRight.encryptReverse(rightRotorInputReverse, 1);
+                output += rotorRight.outputReverse.value;
+            }
+        }
     }
-    else
-    {
-        return 0;
-    }
-
+    return output;
 }

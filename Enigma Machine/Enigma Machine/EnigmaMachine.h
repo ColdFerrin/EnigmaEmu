@@ -29,7 +29,7 @@ public:
     EnigmaMachine();
     void build(Reflector ref, Rotor leftRotorType, Rotor middleRotorType, Rotor rightRotorType);
     void setup(int leftRotorPosittion, int middleRotorPosittion, int rightRotorPosittion);
-    char process(char input);
+    std::string process(std::string input);
 };
 
 #endif // !ENIGMAMACHINE_H_
